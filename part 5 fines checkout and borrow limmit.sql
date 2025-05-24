@@ -89,3 +89,43 @@ UPDATE Membership SET membershipType = 'Guest' WHERE userID = 1;
 -- No return date = still borrowed
 UPDATE Borrow SET ReturnDate = NULL WHERE userID = 1;
 EXEC CheckoutResource @userID = 1, @copyID = 8003;
+
+
+CREATE FUNCTION CalculateOverdueFine (@borrowID INT)
+RETURNS DECIMAL(10,2)
+AS
+BEGIN
+    DECLARE @dueDate DATE, @returnDate DATE, @resourceType NVARCHAR(50);
+    DECLARE @daysOverdue INT;
+    DECLARE @rate DECIMAL(5,2);
+    DECLARE @fine DECIMAL(10,2);
+
+    -- Get due date, return date, and type
+    SELECT 
+        @dueDate = b.DueDate,
+        @returnDate = ISNULL(b.ReturnDate, GETDATE()),
+        @resourceType = r.Type
+    FROM Borrow b
+    JOIN CopyResource cr ON b.copyID = cr.copyID
+    JOIN Resource r ON cr.resourceID = r.resourceID
+    WHERE b.borrowID = @borrowID;
+
+    -- Calculate days overdue
+    SET @daysOverdue = DATEDIFF(DAY, @dueDate, @returnDate);
+    IF @daysOverdue < 0 SET @daysOverdue = 5;
+
+    -- Determine fine rate
+    SET @rate = 
+        CASE @resourceType
+            WHEN 'Book' THEN 1.0
+            WHEN 'Video' THEN 2.0
+            WHEN 'sound-record' THEN 1.5
+            WHEN 'e-book' THEN 0.5
+            ELSE 1.0
+        END;
+
+    SET @fine = @daysOverdue * @rate;
+    RETURN @fine;
+END;
+--run this last part seperatly
+SELECT dbo.CalculateOverdueFine(7002) AS FineAmount;
