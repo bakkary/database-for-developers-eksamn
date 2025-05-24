@@ -1,0 +1,30 @@
+{
+    "resourceID": 9002,
+    "title": "SQL Fundamentals",
+    "authors": ["Jane Doe", "John Smith"],
+    "description": "A complete guide to learning SQL.",
+    "tags": ["SQL", "databases", "querying"],
+    "publication": {
+      "year": 2020,
+      "publisher": "Academic Press"
+    },
+    "reviews": [
+      {
+        "user": "alice123",
+        "rating": 4,
+        "comment": "Very clear introduction.",
+        "date": "2025-04-10"
+      },
+      {
+        "user": "bob456",
+        "rating": 5,
+        "comment": "Great for beginners and intermediate users.",
+        "date": "2025-04-15"
+      }
+    ],
+    "externalLinks": {
+      "doi": "10.1234/sqlbook",
+      "preview": "https://books.example.com/preview/sql-fundamentals"
+    }
+  }
+  
